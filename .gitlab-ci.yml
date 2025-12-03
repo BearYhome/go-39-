@@ -1,0 +1,31 @@
+stages:
+  - build
+
+variables:
+  PUBLIC_REGISTRY_URL: docker.io  # Если нет, добавь
+  PUBLIC_REGISTRY_OWNER: bearyhome  # Замени на свой Docker-логин, если нужно (но лучше возьми из Makefile)
+  APP_NAME: go-39-metoddostavkipril  # Имя образа — имя твоего проекта
+
+build_image:
+  stage: build
+  image: docker:stable  # Контейнер для выполнения
+  services:
+    - docker:dind  # Docker-in-Docker для сборки внутри CI
+  script:
+    - docker login -u $PUBLIC_REGISTRY_OWNER -p $DOCKER_PASSWORD $PUBLIC_REGISTRY_URL
+    - docker build -t $PUBLIC_REGISTRY_URL/$PUBLIC_REGISTRY_OWNER/$APP_NAME:$CI_COMMIT_REF_NAME .
+    - docker push $PUBLIC_REGISTRY_URL/$PUBLIC_REGISTRY_OWNER/$APP_NAME:$CI_COMMIT_REF_NAME
+  only:
+    - master  # Или main — чтобы запускалось на основной ветке
+
+build_image:latest:
+  stage: build
+  image: docker:stable
+  services:
+    - docker:dind
+  script:
+    - docker login -u $PUBLIC_REGISTRY_OWNER -p $DOCKER_PASSWORD $PUBLIC_REGISTRY_URL
+    - docker build -t $PUBLIC_REGISTRY_URL/$PUBLIC_REGISTRY_OWNER/$APP_NAME:latest .
+    - docker push $PUBLIC_REGISTRY_URL/$PUBLIC_REGISTRY_OWNER/$APP_NAME:latest
+  only:
+    - master  # Или main; можно добавить when: manual, если хочешь запускать вручную
