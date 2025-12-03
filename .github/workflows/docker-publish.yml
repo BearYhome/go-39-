@@ -17,9 +17,9 @@ jobs:
           username: bearyhome
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push
-        run: |
-          docker build . -t bearyhome/go-39-:latest
-          docker build . -t bearyhome/go-39-:master
-          docker push bearyhome/go-39-:latest
-          docker push bearyhome/go-39-:master
+- name: Build and push
+  run: |
+    docker build . -t bearyhome/go-39-:latest
+    docker build . -t bearyhome/go-39-:master
+    docker push bearyhome/go-39-:latest
+    docker push bearyhome/go-39-:master
